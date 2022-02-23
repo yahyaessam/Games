@@ -5,7 +5,7 @@ import { RouterModule } from '@angular/router';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { GaugeModule } from 'angular-gauge';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatIconModule } from '@angular/material/icon';
@@ -14,12 +14,18 @@ import { MatSelectModule } from '@angular/material/select';
 import { SearchBarComponent } from './components/search-bar/search-bar.component';
 import { HomeComponent } from './components/home/home.component';
 import { AppRoutingModule } from './app-routing.module';
+import { HttpHeadersInterceptor } from './interceptors/http-headers.interceptor';
+import { HttpErrorsInterceptor } from './interceptors/http-errors.interceptor';
+import { GameDetailsComponent } from './components/game-details/game-details.component';
+import { GameTabsComponent } from './components/game-tabs/game-tabs.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     SearchBarComponent,
-    HomeComponent
+    HomeComponent,
+    GameDetailsComponent,
+    GameTabsComponent
   ],
   imports: [
     BrowserModule,
@@ -34,7 +40,18 @@ import { AppRoutingModule } from './app-routing.module';
     AppRoutingModule,
     RouterModule
   ],
-  providers: [],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: HttpHeadersInterceptor,
+      multi: true
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: HttpErrorsInterceptor,
+      multi: true
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
